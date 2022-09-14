@@ -11,17 +11,17 @@ use DB;
 class ParqueoController extends Controller
 {
 	/**
-     * Se comprueba si existe el vehiculo mediante la chapa.
+     * Se comprueba si existe el vehiculo mediante la placa.
      * Si no existe, se crea el vehiculo con sus datos y se registra la entrada.
      * Si existe, se comprueba que no exista registro de entrada sin salida.
-     * Si existe entrada sin salida, retorna mensaje de error que existe un vehiculo con esa chapa sin salida
+     * Si existe entrada sin salida, retorna mensaje de error que existe un vehiculo con esa placa sin salida
      * Si no existe entrada sin salida, se registra una nueva entrada al estacionamiento  
      */
     public function registrarEntrada(Request $request) {
-    	$vehiculo = Vehiculo::where(['chapa' => $request->get('chapa')])->first();
+    	$vehiculo = Vehiculo::where(['chapa' => $request->get('placa')])->first();
     	if($vehiculo == null) {
     		$vehiculo = new Vehiculo();
-    		$vehiculo->chapa = $request->get('chapa');
+    		$vehiculo->chapa = $request->get('placa');
     		$vehiculo->save();
     		$parqueo = new Parqueo();
     		$parqueo->entrada = time();
@@ -40,10 +40,10 @@ class ParqueoController extends Controller
     		if($parqueo != null)
     			return response()->json([
 	    			"error" => [
-	    				"vehiculo" => $request->get('chapa'),
+	    				"vehiculo" => $request->get('placa'),
 	    				"dia" => date("m/d/Y", $parqueo->vehiculos->entrada),
 	    				"hora" => date("H:i", $parqueo->vehiculos->entrada),
-	    				"mensaje" => "Existe un vehiculo sin salida registrada en el estacionamiento con esta chapa"
+	    				"mensaje" => "Existe un vehiculo sin salida registrada en el estacionamiento con esta placa"
 	    			]
 	    		], 500);
     		else {
@@ -63,20 +63,20 @@ class ParqueoController extends Controller
     }
 
     /**
-     * Se comprueba si existe el vehiculo estacionado mediante la chapa.
-     * Si no existe, retorna mensaje de error que no existe un vehiculo estacionado con esa chapa.
+     * Se comprueba si existe el vehiculo estacionado mediante la placa.
+     * Si no existe, retorna mensaje de error que no existe un vehiculo estacionado con esa placa.
      * Si existe, se registra la salida y se calcula el importe a pagar por el cliente.
      * Retorna el Importe a pagar 
      */
     public function registrarSalida(Request $request) {
     	$parqueo = Parqueo::whereHas('vehiculos', function($q) use($request) {
-    		$q->where(['chapa' => $request->get('chapa')]);
+    		$q->where(['chapa' => $request->get('placa')]);
     	})->whereNull('salida')->first();
     	if($parqueo == null)
     		return response()->json([
 	    		"error" => [
-	    			"vehiculo" => $request->get('chapa'),
-	    			"mensaje" => "No existe un vehiculo estacionado con esta chapa"
+	    			"vehiculo" => $request->get('placa'),
+	    			"mensaje" => "No existe un vehiculo estacionado con esta placa"
 	    		]
 	    	], 500);
     	else {
@@ -90,7 +90,7 @@ class ParqueoController extends Controller
     		$parqueo->save();
     		return response()->json([
 	    		"salida" => [
-	    			"vehiculo" => $request->get('chapa'),
+	    			"vehiculo" => $request->get('placa'),
 	    			"dia_entrada" => date("m/d/Y", $parqueo->entrada),
 	    			"hora_entrada" => date("H:i", $parqueo->entrada),
 	    			"dia_salida" => date("m/d/Y", $parqueo->salida),
