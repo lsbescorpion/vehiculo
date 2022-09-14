@@ -5,14 +5,14 @@ Para el sistema se utilizo Laravel 9.19 y Mysql 8
 Para acceder a este caso de uso se utiliza los siguientes datos:
 * endpoint: **api/entrada**,
 * method: **POST**,
-* body: parametro de tipo string **placa**
+* body: parametro tipo string nombre (**placa**)
 
 ## Caso de uso "Registra salida"
 
 Para acceder a este caso de uso se utiliza los siguientes datos:
 * endpoint: **api/salida**,
 * method: **POST**,
-* body: parametro de tipo string **placa**
+* body: parametro tipo string nombre (**placa**)
 
 ## Caso de uso "Listado de clientes #1"
 
